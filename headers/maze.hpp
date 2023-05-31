@@ -10,8 +10,11 @@ class Maze {
         Maze(int width, int height);
         ~Maze();
 
+        const Cell& getCell(int x, int y) const;
+
         void generate();
-        void print();
+        int getWidth() const;
+        int getHeight() const;
 
     private:
         int width_;
