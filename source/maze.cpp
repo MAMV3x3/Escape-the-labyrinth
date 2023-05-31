@@ -1,97 +1,71 @@
 #include "../headers/maze.hpp"
+#include <iostream>
+#include <random>
+#include <algorithm>
+#include "../headers/screen.hpp"
 
-Maze::Maze() : width_(0), height_(0), rng_(rd_()) {}
+Maze::Maze(int width, int height) : width_(width), height_(height), cells_(width * height) {}
 
-Maze::Maze(int width, int height) : width_(width), height_(height), rng_(rd_()) {
-    initializeGrid();
-}
+void Maze::generate() {
+    std::random_device rd;
+    std::mt19937 rng(rd());
+    std::uniform_int_distribution<int> dist(1, 2);
 
-Maze::~Maze() {}
+    int startX = dist(rng) * 2 - 1;
+    int startY = 0;
+    int endX = dist(rng) * 2 - 1;
+    int endY = height_ - 1;
 
-void Maze::initializeGrid() {
-    grid_.resize(width_, std::vector<bool>(height_, false));
-}
+    cells_[startY * width_ + startX].setType(CellType::START);
+    cells_[endY * width_ + endX].setType(CellType::END);
 
-void Maze::generateMaze() {
-    // Reset the grid
-    initializeGrid();
+    createPath(startX, startY);
 
-    // Set the borders as walls
-    for (int i = 0; i < width_; ++i) {
-        grid_[i][0] = true;                 // Top border
-        grid_[i][height_ - 1] = true;       // Bottom border
-    }
-    for (int j = 0; j < height_; ++j) {
-        grid_[0][j] = true;                 // Left border
-        grid_[width_ - 1][j] = true;        // Right border
-    }
-
-    // Set random start and end positions
-    std::uniform_int_distribution<int> dist(1, (width_ - 1) / 2);
-    int startX = dist(rng_) * 2;
-    int startY = dist(rng_) * 2;
-    int endX = dist(rng_) * 2;
-    int endY = dist(rng_) * 2;
-    grid_[startX][startY] = false;      // Start position
-    grid_[endX][endY] = false;          // End position
-
-    // Generate the maze path
-    generatePath(startX, startY);
-}
-
-void Maze::generatePath(int x, int y) {
-    grid_[x][y] = false;
-
-    std::vector<std::pair<int, int>> neighbors = getNeighbors(x, y);
-    std::shuffle(neighbors.begin(), neighbors.end(), rng_);
-
-    for (const auto& neighbor : neighbors) {
-        int nx = neighbor.first;
-        int ny = neighbor.second;
-        if (grid_[nx][ny]) {
-            int mx = (x + nx) / 2;
-            int my = (y + ny) / 2;
-            grid_[mx][my] = false;
-            generatePath(nx, ny);
+    for (int y = 0; y < height_; ++y) {
+        for (int x = 0; x < width_; ++x) {
+            int index = y * width_ + x;
+            if (cells_[index].getType() == CellType::WALL) {
+                std::cout << "⬛";
+            } else if (cells_[index].getType() == CellType::PATH) {
+                std::cout << "⬜";
+            } else if (cells_[index].getType() == CellType::START) {
+                std::cout << "🏁";
+            } else if (cells_[index].getType() == CellType::END) {
+                std::cout << "🚀";
+            }
         }
+        std::cout << '\n';
     }
 }
 
-std::vector<std::pair<int, int>> Maze::getNeighbors(int x, int y) {
-    std::vector<std::pair<int, int>> neighbors;
+void Maze::createPath(int x, int y) {
+    cells_[y * width_ + x].setType(CellType::PATH);
 
-    if (x - 2 >= 0) {
-        neighbors.push_back({x - 2, y});
+    while (true) {
+        std::vector<std::pair<int, int>> directions;
+        if (x >= 2 && cells_[y * width_ + x - 2].getType() == CellType::WALL) {
+            directions.emplace_back(-2, 0);
+        }
+        if (x <= width_ - 3 && cells_[y * width_ + x + 2].getType() == CellType::WALL) {
+            directions.emplace_back(2, 0);
+        }
+        if (y >= 2 && cells_[(y - 2) * width_ + x].getType() == CellType::WALL) {
+            directions.emplace_back(0, -2);
+        }
+        if (y <= height_ - 3 && cells_[(y + 2) * width_ + x].getType() == CellType::WALL) {
+            directions.emplace_back(0, 2);
+        }
+
+        if (directions.empty()) {
+            return;
+        }
+
+        std::random_shuffle(directions.begin(), directions.end());
+        int dx = directions.back().first;
+        int dy = directions.back().second;
+        directions.pop_back();
+
+        cells_[(y + dy / 2) * width_ + (x + dx / 2)].setType(CellType::PATH);
+        createPath(x + dx, y + dy);
     }
-    if (x + 2 < width_) {
-        neighbors.push_back({x + 2, y});
-    }
-    if (y - 2 >= 0) {
-        neighbors.push_back({x, y - 2});
-    }
-    if (y + 2 < height_) {
-        neighbors.push_back({x, y + 2});
-    }
-
-    return neighbors;
-}
-
-void Maze::setPlayerStartPosition(int x, int y) {
-    grid_[x][y] = false;
-}
-
-void Maze::setExitPosition(int x, int y) {
-    grid_[x][y] = false;
-}
-
-bool Maze::isWall(int x, int y) const {
-    return grid_[x][y];
-}
-
-int Maze::getWidth() const {
-    return width_;
-}
-
-int Maze::getHeight() const {
-    return height_;
 }

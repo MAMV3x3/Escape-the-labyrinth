@@ -1,22 +1,17 @@
 #ifndef CELLS_HPP
 #define CELLS_HPP
 
-class Cell{
-    public:
-        Cell();
-        Cell(int x, int y);
-        ~Cell();
+enum class CellType { WALL, PATH, START, END };
 
-        void setWall(bool wall);
-        bool isWall() const;
-        void setVisited(bool visited);
-        bool isVisited() const;
+class Cell {
+public:
+    Cell();
 
-    private:
-        int x_;
-        int y_;
-        bool wall_;
-        bool visited_;
+    void setType(CellType type);
+    CellType getType() const;
+
+private:
+    CellType type_;
 };
 
-#endif // CELLS_HPP
+#endif  // CELLS_HPP
