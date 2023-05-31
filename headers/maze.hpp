@@ -2,28 +2,31 @@
 #define MAZE_HPP
 
 #include <vector>
-#include "cells.hpp"
+#include <random>
 
 class Maze {
-    public:
-        Maze();
-        Maze(int width, int height);
-        ~Maze();
+public:
+    Maze();
+    Maze(int width, int height);
+    ~Maze();
 
-        const Cell& getCell(int x, int y) const;
+    void generateMaze();
+    void setPlayerStartPosition(int x, int y);
+    void setExitPosition(int x, int y);
+    bool isWall(int x, int y) const;
+    int getWidth() const;
+    int getHeight() const;
 
-        void generate();
-        int getWidth() const;
-        int getHeight() const;
+private:
+    int width_;
+    int height_;
+    std::vector<std::vector<bool>> grid_;
+    std::random_device rd_;
+    std::mt19937 rng_;
 
-    private:
-        int width_;
-        int height_;
-        std::vector<std::vector<Cell>> cells_;
-
-        void initializeCells();
-        void generateRecursiveBacktracker(int x, int y);
-
+    void initializeGrid();
+    std::vector<std::pair<int, int>> getNeighbors(int x, int y);
+    void generatePath(int x, int y);
 };
 
-#endif // MAZE_HPP
+#endif
