@@ -1,73 +1,91 @@
 #include "../headers/maze.hpp"
-#include <iostream>
-#include <algorithm>
 
-Maze::Maze() : width_(10), height_(10) {
-    initializeCells();
+Maze::Maze() : width_(0), height_(0), rng_(rd_()) {}
+
+Maze::Maze(int width, int height) : width_(width), height_(height), rng_(rd_()) {
+    initializeGrid();
 }
 
-Maze::Maze(int width, int height) : width_(width), height_(height) {
-    initializeCells();
+Maze::~Maze() {}
+
+void Maze::initializeGrid() {
+    grid_.resize(width_, std::vector<bool>(height_, false));
 }
 
-Maze::~Maze() {
-    // TODO implement destructor
-}
+void Maze::generateMaze() {
+    // Reset the grid
+    initializeGrid();
 
-const Cell& Maze::getCell(int x, int y) const {
-    return cells_[x][y];
-}
-
-void Maze::initializeCells() {
-    for (int i = 0; i < width_; i++) {
-        std::vector<Cell> row;
-        for (int j = 0; j < height_; j++) {
-            Cell cell(i, j);
-            row.push_back(cell);
-        }
-        cells_.push_back(row);
+    // Set the borders as walls
+    for (int i = 0; i < width_; ++i) {
+        grid_[i][0] = true;                 // Top border
+        grid_[i][height_ - 1] = true;       // Bottom border
     }
+    for (int j = 0; j < height_; ++j) {
+        grid_[0][j] = true;                 // Left border
+        grid_[width_ - 1][j] = true;        // Right border
+    }
+
+    // Set random start and end positions
+    std::uniform_int_distribution<int> dist(1, (width_ - 1) / 2);
+    int startX = dist(rng_) * 2;
+    int startY = dist(rng_) * 2;
+    int endX = dist(rng_) * 2;
+    int endY = dist(rng_) * 2;
+    grid_[startX][startY] = false;      // Start position
+    grid_[endX][endY] = false;          // End position
+
+    // Generate the maze path
+    generatePath(startX, startY);
 }
 
-void Maze::generate() {
-    generateRecursiveBacktracker(1, 1);
-}
+void Maze::generatePath(int x, int y) {
+    grid_[x][y] = false;
 
-void Maze::generateRecursiveBacktracker(int x, int y) {
-    // Mark the current cell as visited
-    cells_[x][y].setVisited(true);
+    std::vector<std::pair<int, int>> neighbors = getNeighbors(x, y);
+    std::shuffle(neighbors.begin(), neighbors.end(), rng_);
 
-    // Create a vector of all posible directions to move (up, down, left, right)
-    std::vector<std::pair<int, int>> directions = {
-        std::make_pair(0, -2),
-        std::make_pair(0, 2),
-        std::make_pair(-2, 0),
-        std::make_pair(2, 0)
-    };
-
-    // Shuffle the vector of directions
-    std::random_shuffle(directions.begin(), directions.end());
-
-    // For each direction in the vector
-    for (const auto& direction : directions) {
-        // Get the coordinates of the cell in that direction
-        int nextX = x + direction.first;
-        int nextY = y + direction.second;
-
-        // If the cell is within the bounds of the maze
-        if (nextX >= 0 && nextX < width_ && nextY >= 0 && nextY < height_) {
-            // If the cell has not been visited
-            if (!cells_[nextX][nextY].isVisited()) {
-                // Remove the wall between the current cell and the next cell
-                int wallX = (x + nextX) / 2;
-                int wallY = (y + nextY) / 2;
-                cells_[wallX][wallY].setWall(false);
-
-                // Recursively call the function with the next cell
-                generateRecursiveBacktracker(nextX, nextY);
-            }
+    for (const auto& neighbor : neighbors) {
+        int nx = neighbor.first;
+        int ny = neighbor.second;
+        if (grid_[nx][ny]) {
+            int mx = (x + nx) / 2;
+            int my = (y + ny) / 2;
+            grid_[mx][my] = false;
+            generatePath(nx, ny);
         }
     }
+}
+
+std::vector<std::pair<int, int>> Maze::getNeighbors(int x, int y) {
+    std::vector<std::pair<int, int>> neighbors;
+
+    if (x - 2 >= 0) {
+        neighbors.push_back({x - 2, y});
+    }
+    if (x + 2 < width_) {
+        neighbors.push_back({x + 2, y});
+    }
+    if (y - 2 >= 0) {
+        neighbors.push_back({x, y - 2});
+    }
+    if (y + 2 < height_) {
+        neighbors.push_back({x, y + 2});
+    }
+
+    return neighbors;
+}
+
+void Maze::setPlayerStartPosition(int x, int y) {
+    grid_[x][y] = false;
+}
+
+void Maze::setExitPosition(int x, int y) {
+    grid_[x][y] = false;
+}
+
+bool Maze::isWall(int x, int y) const {
+    return grid_[x][y];
 }
 
 int Maze::getWidth() const {
