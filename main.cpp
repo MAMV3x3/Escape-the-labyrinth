@@ -10,5 +10,7 @@ int main() {
     Maze maze(width, height);
     maze.generate();
 
+    Screen::drawMaze(maze);
+
     return 0;
 }

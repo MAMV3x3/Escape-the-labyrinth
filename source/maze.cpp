@@ -9,18 +9,36 @@ Maze::Maze(int width, int height) : width_(width), height_(height), cells_(width
 void Maze::generate() {
     std::random_device rd;
     std::mt19937 rng(rd());
-    std::uniform_int_distribution<int> dist(1, 2);
+
+    // We want to select a random spot to start the maze generation in the top border
+    std::uniform_int_distribution<int> dist(1, width_ / 2);
 
     int startX = dist(rng) * 2 - 1;
-    int startY = 0;
-    int endX = dist(rng) * 2 - 1;
-    int endY = height_ - 1;
-
-    cells_[startY * width_ + startX].setType(CellType::START);
-    cells_[endY * width_ + endX].setType(CellType::END);
+    int startY = 1;
 
     createPath(startX, startY);
 
+    cells_[(startY - 1) * width_ + startX].setType(CellType::START);
+
+    // Pick a random cell in the bottom border adyacent to a path cell
+    // Finding a potential end cell
+    std::vector<int> potentialEndCells;
+    for (int x = 1; x < width_ - 1; x += 1) {
+        int y = height_ - 1;
+        if (cells_[(y - 1) * width_ + x].getType() == CellType::PATH){
+            potentialEndCells.push_back(y * width_ + x);
+        }
+    }
+
+    // Randomly select an end cell from the potential end cells
+    if (!potentialEndCells.empty()) {
+        int selectedCellIndex = std::rand() % potentialEndCells.size();
+        int selectedCell = potentialEndCells[selectedCellIndex];
+        cells_[selectedCell].setType(CellType::END);
+    }
+}
+
+void Maze::drawMaze() const{
     for (int y = 0; y < height_; ++y) {
         for (int x = 0; x < width_; ++x) {
             int index = y * width_ + x;

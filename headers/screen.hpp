@@ -6,6 +6,7 @@
 class Screen {
 public:
     static void clear();
+    static void drawMaze(const Maze& maze);
 };
 
 #endif  // SCREEN_HPP

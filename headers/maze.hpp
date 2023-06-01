@@ -16,7 +16,7 @@ private:
     int width_;
     int height_;
     std::vector<Cell> cells_;
-
+    
     void createPath(int x, int y);
 };
 
