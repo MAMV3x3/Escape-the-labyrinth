@@ -32,7 +32,7 @@ void Game::run() {
     maze_.setCellType(player_.getX(), player_.getY(), CellType::PLAYER);
     screen_.clear();
     screen_.resizeConsoleWindow(width_ * 2, height_);
-
+    render();
     while (true) {
         if(checkGameStatus() == 0) {
             gameOver();
@@ -41,7 +41,6 @@ void Game::run() {
             update();
         }
         handleInput();
-        render();
         Sleep(100);
     }
 }
@@ -49,17 +48,22 @@ void Game::run() {
 void Game::handleInput() {
     if (GetAsyncKeyState(VK_UP)) {
         checkCollision(0);
+        render();
         player_.handleMovement(maze_, 0);
     } else if (GetAsyncKeyState(VK_RIGHT)) {
         checkCollision(1);
+        render();
         player_.handleMovement(maze_, 1);
     } else if (GetAsyncKeyState(VK_DOWN)) {
         checkCollision(2);
+        render();
         player_.handleMovement(maze_, 2);
     } else if (GetAsyncKeyState(VK_LEFT)) {
         checkCollision(3);
+        render();
         player_.handleMovement(maze_, 3);
     }
+    
 }
 
 void Game::update() {
