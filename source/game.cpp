@@ -16,6 +16,13 @@ void Game::run() {
     Screen::resizeConsoleWindow(width_ * 2, height_);
 
     while (true) {
+        if(checkGameStatus() == 0) {
+            gameOver();
+            break;
+        } else if (checkGameStatus() == 1) {
+            gameOver();
+            break;
+        }
         handleInput();
         update();
         render();
@@ -40,7 +47,7 @@ void Game::handleInput() {
 }
 
 void Game::update() {
-    if (player_.getX() == maze_.getEndX() && player_.getY() == maze_.getEndY()) {
+    if (maze_.getCellType(player_.getX(), player_.getY()) == CellType::END) {
         // maze_.generate();
         // player_.setLives(3);
         Screen::clear();
@@ -77,6 +84,8 @@ void Game::checkCollision(int direction) {
             break;
     }
 
+    
+
     if (player_.getLives() == 0) {
         gameOver();
     }
@@ -85,4 +94,13 @@ void Game::checkCollision(int direction) {
 void Game::gameOver() {
     Screen::clear();
     std::cout << "Game over!" << std::endl;
+}
+
+int Game::checkGameStatus() {
+    if (player_.getLives() == 0) {
+        return 0;
+    } else if (player_.getX() == maze_.getEndX() && player_.getY() == maze_.getEndY()) {
+        return 1;
+    }
+    return 2;
 }

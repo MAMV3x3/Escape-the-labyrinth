@@ -42,10 +42,10 @@ void Screen::drawMaze(const Maze& maze, const Player& player) {
 
     // // Draw score and lives
     gotoxy(1, 1);
-    std::cout << "Score: " << player.getX();
+    std::cout << "Score: " << player.getScore();
 
     gotoxy(consoleWidth - 1, 1);
-    std::cout << "Lives: " << player.getY();
+    std::cout << "Lives: " << player.getLives();
 
     // Draw maze and player in the middle of the console
     for (int y = 0; y < height; ++y) {

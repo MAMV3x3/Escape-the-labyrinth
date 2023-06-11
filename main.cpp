@@ -2,8 +2,9 @@
 #include "headers/game.hpp"
 
 int main() {
-    Game game(12, 12);
+    Game game(30, 30);
     game.run();
 
+    system("pause");
     return 0;
 }

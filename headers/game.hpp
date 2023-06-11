@@ -23,6 +23,7 @@ private:
     void render();
     void checkCollision(int direction);
     void gameOver();
+    int checkGameStatus();
 };
 
 #endif  // GAME_HPP
