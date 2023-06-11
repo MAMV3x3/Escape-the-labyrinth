@@ -11,6 +11,7 @@ Screen::Screen() : width_(11), height_(11) {}
 // Constructor with width and height parameters
 Screen::Screen(int width, int height) : width_(width), height_(height) {}
 
+//Creates console cursor
 void Screen::gotoxy(int x, int y)
 {
     short int _x = x;
@@ -19,6 +20,7 @@ void Screen::gotoxy(int x, int y)
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
 
+//Changes size of the console
 void Screen::resizeConsoleWindow(int width, int height)
 {
     int8_t consoleWidth = width;
@@ -47,6 +49,7 @@ void Screen::setConsoleTitle()
     SetConsoleTitleA("Escape the labyrinth");
 }
 
+// Hides console cursor
 void Screen::hideCursor()
 {
     HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -56,6 +59,7 @@ void Screen::hideCursor()
     SetConsoleCursorInfo(consoleHandle, &info);
 }
 
+//Sets UI for the running game
 void Screen::drawMaze(const Maze &maze, const Player &player, int screenWidth, int screenHeight)
 {
     const int width = maze.getWidth();
@@ -105,6 +109,7 @@ void Screen::drawMaze(const Maze &maze, const Player &player, int screenWidth, i
     }
 }
 
+// Gets needed variables for screen
 int Screen::getHeight() const
 {
     return height_;
@@ -125,6 +130,7 @@ void Screen::setWidth(int width)
     width_ = width;
 }
 
+//Main Screen menu display
 void Screen::drawMenu()
 {
     gotoxy(1, 1);
@@ -146,6 +152,7 @@ void Screen::drawMenu()
     std::cout << "\t>>: ";
 }
 
+//Gameover menu display
 void Screen::drawGameOver()
 {
     clear();

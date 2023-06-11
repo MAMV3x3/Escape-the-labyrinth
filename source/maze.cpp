@@ -6,6 +6,7 @@
 
 Maze::Maze() : width_(11), height_(11), cells_(width_ * height_) {}
 
+// Defines Cell Size
 Maze::Maze(int width, int height) : width_(width), height_(height), cells_(width * height)
 {
     if (width_ % 2 == 0)
@@ -62,7 +63,7 @@ void Maze::generate()
         cells_[selectedCell].setType(CellType::END);
     }
 }
-
+// Identifies if the cell is a Wall
 CellType Maze::getCellType(int x, int y) const
 {
     if (x < 0 || x >= width_ || y < 0 || y >= height_)
@@ -72,11 +73,13 @@ CellType Maze::getCellType(int x, int y) const
     return cells_[y * width_ + x].getType();
 }
 
+// Defines cell type
 void Maze::setCellType(int x, int y, CellType type)
 {
     cells_[y * width_ + x].setType(type);
 }
 
+// Creates the path of the labyrinth
 void Maze::createPath(int x, int y)
 {
     cells_[y * width_ + x].setType(CellType::PATH);
@@ -116,6 +119,7 @@ void Maze::createPath(int x, int y)
     }
 }
 
+//Get all necesary variables 
 void Maze::setWidth(int width)
 {
     width_ = width;

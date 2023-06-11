@@ -2,7 +2,9 @@
 #include "headers/game.hpp"
 
 int main() {
-    Game game(10, 10);
+    //Set lybrinth size
+    Game game(11, 11);
+    //Start game command
     game.init();
 
     system("pause");

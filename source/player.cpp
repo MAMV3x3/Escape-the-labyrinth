@@ -1,10 +1,12 @@
 // player.cpp
 #include "../headers/player.hpp"
 
+// Set player temporal cordinates, lives and score
 Player::Player() : x_(0), y_(0), lives_(3), score_(0) {}
 
 Player::Player(int x, int y) : x_(x), y_(y), lives_(3), score_(0) {}
 
+// Defines all posible movement of the player
 void Player::handleMovement(Maze &maze, int direction)
 {
     // 0 - up
@@ -49,6 +51,7 @@ void Player::handleMovement(Maze &maze, int direction)
     }
 }
 
+//Gets all player needed date
 int Player::getX() const
 {
     return x_;
