@@ -4,17 +4,28 @@
 #include <algorithm>
 #include "../headers/screen.hpp"
 
-Maze::Maze(int width, int height) : width_(width), height_(height), cells_(width * height) {}
+Maze::Maze() : width_(11), height_(11), cells_(width_ * height_) {}
+
+Maze::Maze(int width, int height) : width_(width), height_(height), cells_(width * height) {
+    if(width_ % 2 == 0) {
+        width_ += 1;
+    }
+    if(height_ % 2 == 0) {
+        height_ += 1;
+    }
+    cells_.resize(width_ * height_);
+}
 
 void Maze::generate() {
     std::random_device rd;
     std::mt19937 rng(rd());
 
     // We want to select a random spot to start the maze generation in the top border
-    std::uniform_int_distribution<int> dist(1, width_ / 2);
+    std::uniform_int_distribution<int> dist(1, (width_) / 2);
 
     int startX = dist(rng) * 2 - 1;
     int startY = 1;
+    setStartCell(startX, startY);
 
     createPath(startX, startY);
 
@@ -34,26 +45,20 @@ void Maze::generate() {
     if (!potentialEndCells.empty()) {
         int selectedCellIndex = std::rand() % potentialEndCells.size();
         int selectedCell = potentialEndCells[selectedCellIndex];
+        setEndCell(selectedCell % width_, selectedCell / width_);
         cells_[selectedCell].setType(CellType::END);
     }
 }
 
-void Maze::drawMaze() const{
-    for (int y = 0; y < height_; ++y) {
-        for (int x = 0; x < width_; ++x) {
-            int index = y * width_ + x;
-            if (cells_[index].getType() == CellType::WALL) {
-                std::cout << "⬛";
-            } else if (cells_[index].getType() == CellType::PATH) {
-                std::cout << "⬜";
-            } else if (cells_[index].getType() == CellType::START) {
-                std::cout << "🏁";
-            } else if (cells_[index].getType() == CellType::END) {
-                std::cout << "🚀";
-            }
-        }
-        std::cout << '\n';
+CellType Maze::getCellType(int x, int y) const {
+    if (x < 0 || x >= width_ || y < 0 || y >= height_) {
+        return CellType::WALL;  // Return WALL for out-of-bounds coordinates
     }
+    return cells_[y * width_ + x].getType();
+}
+
+void Maze::setCellType(int x, int y, CellType type) {
+    cells_[y * width_ + x].setType(type);
 }
 
 void Maze::createPath(int x, int y) {
@@ -86,4 +91,38 @@ void Maze::createPath(int x, int y) {
         cells_[(y + dy / 2) * width_ + (x + dx / 2)].setType(CellType::PATH);
         createPath(x + dx, y + dy);
     }
+}
+
+int Maze::getWidth() const {
+    return width_;
+}
+
+int Maze::getHeight() const {
+    return height_;
+}
+
+int Maze::getStartX() const {
+    return startX_;
+}
+
+int Maze::getStartY() const {
+    return startY_;
+}
+
+int Maze::getEndX() const {
+    return endX_;
+}
+
+int Maze::getEndY() const {
+    return endY_;
+}
+
+void Maze::setStartCell(int x, int y) {
+    startX_ = x;
+    startY_ = y;
+}
+
+void Maze::setEndCell(int x, int y) {
+    endX_ = x;
+    endY_ = y;
 }

@@ -1,16 +1,9 @@
-#include "headers/maze.hpp"
-#include "headers/screen.hpp"
+// main.cpp
+#include "headers/game.hpp"
 
 int main() {
-    int width = 15;
-    int height = 15;
-
-    Screen::clear();
-
-    Maze maze(width, height);
-    maze.generate();
-
-    Screen::drawMaze(maze);
+    Game game(12, 12);
+    game.run();
 
     return 0;
 }

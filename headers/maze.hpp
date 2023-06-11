@@ -7,14 +7,28 @@
 
 class Maze {
 public:
+    Maze();
     Maze(int width, int height);
 
     void generate();
-    void drawMaze() const;
+    int getWidth() const;
+    int getHeight() const;
+    int getStartX() const;
+    int getStartY() const;
+    int getEndX() const;
+    int getEndY() const;
+    void setStartCell(int x, int y);
+    void setEndCell(int x, int y);
+    CellType getCellType(int x, int y) const;
+    void setCellType(int x, int y, CellType type);
 
 private:
     int width_;
     int height_;
+    int startX_;
+    int startY_;
+    int endX_;
+    int endY_;
     std::vector<Cell> cells_;
     
     void createPath(int x, int y);

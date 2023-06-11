@@ -1,7 +1,7 @@
 #ifndef CELLS_HPP
 #define CELLS_HPP
 
-enum class CellType { WALL, PATH, START, END };
+enum class CellType { WALL, PATH, START, END, PLAYER};
 
 class Cell {
 public:
