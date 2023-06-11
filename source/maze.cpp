@@ -17,6 +17,11 @@ Maze::Maze(int width, int height) : width_(width), height_(height), cells_(width
 }
 
 void Maze::generate() {
+    // Fill the maze grid with walls
+    for (int i = 0; i < width_ * height_; i++) {
+        cells_[i].setType(CellType::WALL);
+    }
+    
     std::random_device rd;
     std::mt19937 rng(rd());
 

@@ -20,11 +20,9 @@ void Game::run() {
             gameOver();
             break;
         } else if (checkGameStatus() == 1) {
-            gameOver();
-            break;
+            update();
         }
         handleInput();
-        update();
         render();
         Sleep(100);
     }
@@ -47,12 +45,9 @@ void Game::handleInput() {
 }
 
 void Game::update() {
-    if (maze_.getCellType(player_.getX(), player_.getY()) == CellType::END) {
-        // maze_.generate();
-        // player_.setLives(3);
-        Screen::clear();
-        std::cout << "You won!" << std::endl;
-    }
+    player_.setLives(3);
+    player_.setScore(player_.getScore() + 1);
+    run();
 }
 
 void Game::render() {
@@ -82,12 +77,6 @@ void Game::checkCollision(int direction) {
                 player_.setLives(player_.getLives() - 1);
             }
             break;
-    }
-
-    
-
-    if (player_.getLives() == 0) {
-        gameOver();
     }
 }
 

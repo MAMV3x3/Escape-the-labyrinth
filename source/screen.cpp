@@ -45,20 +45,24 @@ void Screen::drawMaze(const Maze& maze, const Player& player) {
     std::cout << "Score: " << player.getScore();
 
     gotoxy(consoleWidth - 1, 1);
-    std::cout << "Lives: " << player.getLives();
+    std::cout << "Lives: ";
+    for (int i = 0; i < player.getLives(); ++i) {
+        std::cout << char(3);
+    }
 
     // Draw maze and player in the middle of the console
     for (int y = 0; y < height; ++y) {
         gotoxy(consoleWidth/2 - width/2, 4 + y);
         for (int x = 0; x < width; ++x) {
             if (maze.getCellType(x, y) == CellType::WALL) {
-                std::cout << "#";
+                // print ascii 178
+                std::cout << char(219);
             } else if ((maze.getCellType(x, y) == CellType::PATH) || (maze.getCellType(x, y) == CellType::START)) {
                 std::cout << " ";
             } else if (maze.getCellType(x, y) == CellType::END) {
-                std::cout << "E";
+                std::cout << char(206);
             } else if (maze.getCellType(x, y) == CellType::PLAYER) {
-                std::cout << "@";
+                std::cout << char(207);
             }
         }
         std::cout << '\n';

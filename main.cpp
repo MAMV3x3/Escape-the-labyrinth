@@ -2,7 +2,7 @@
 #include "headers/game.hpp"
 
 int main() {
-    Game game(30, 30);
+    Game game(12, 12);
     game.run();
 
     system("pause");
