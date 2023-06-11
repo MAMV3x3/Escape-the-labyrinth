@@ -20,6 +20,14 @@ Game::Game(int width, int height) : width_(width), height_(height), maze_(width_
     {
         height_ = 3;
     }
+    if (width_ % 2 == 0)
+    {
+        width_++;
+    }
+    if (height_ % 2 == 0)
+    {
+        height_++;
+    }
     maze_.setWidth(width_);
     maze_.setHeight(height_);
     screen_.resizeConsoleWindow(std::max(width_ * 2, 50), std::max(height_ + 6, 20));
@@ -156,12 +164,14 @@ void Game::gameOver()
 {
     screen_.clear();
     screen_.drawGameOver();
-    std::cin.clear();
     std::cout << "\tSCORE: " << player_.getScore() << std::endl
               << std::endl;
     std::cout << "\t1. Play again" << std::endl;
     std::cout << "\t2. Exit" << std::endl;
     std::cout << "\t>>: ";
+    // clear input buffer
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     int option = 0;
     std::cin >> option;
     switch (option)

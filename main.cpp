@@ -3,7 +3,7 @@
 
 int main() {
     //Set lybrinth size
-    Game game(11, 11);
+    Game game(10, 10);
     //Start game command
     game.init();
 
