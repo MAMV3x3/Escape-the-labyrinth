@@ -3,17 +3,35 @@
 #include <Windows.h>
 #include <iostream>
 
-Game::Game() : width_(11), height_(11), maze_(width_, height_), player_(1, 1) {}
+Game::Game() : width_(11), height_(11), maze_(width_, height_), player_(1, 1), screen_(11 * 2 + 4, 11 + 4){}
 
-Game::Game(int width, int height) : width_(width), height_(height), maze_(width_, height_), player_(1, 1) {}
+Game::Game(int width, int height) : width_(width), height_(height), maze_(width_, height_), player_(1, 1), screen_(width * 2 + 4, height + 4) {}
+
+void Game::init() {
+    screen_.drawMenu();
+    int option = 0;
+    std::cin >> option;
+    switch (option) {
+        case 1:
+            screen_.clear();
+            run();
+            break;
+        case 2:
+            exit(0);
+            break;
+        default:
+            exit(0);
+            break;
+    }
+}
 
 void Game::run() {
     maze_.generate();
     player_.setX(maze_.getStartX());
     player_.setY(maze_.getStartY() - 1);
     maze_.setCellType(player_.getX(), player_.getY(), CellType::PLAYER);
-    Screen::clear();
-    Screen::resizeConsoleWindow(width_ * 2, height_);
+    screen_.clear();
+    screen_.resizeConsoleWindow(width_ * 2, height_);
 
     while (true) {
         if(checkGameStatus() == 0) {
@@ -51,8 +69,8 @@ void Game::update() {
 }
 
 void Game::render() {
-    Screen::clear();
-    Screen::drawMaze(maze_, player_);
+    screen_.clear();
+    screen_.drawMaze(maze_, player_);
 }
 
 void Game::checkCollision(int direction) {
@@ -81,8 +99,11 @@ void Game::checkCollision(int direction) {
 }
 
 void Game::gameOver() {
-    Screen::clear();
-    std::cout << "Game over!" << std::endl;
+    screen_.clear();
+    screen_.drawGameOver();
+    std::cout << "Your score: " << player_.getScore() << std::endl;
+    std::cin.get();
+    init();
 }
 
 int Game::checkGameStatus() {

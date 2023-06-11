@@ -2,6 +2,8 @@
 #include <iostream>
 #include <windows.h>
 
+Screen::Screen(int width, int height) : width_(width), height_(height) {}
+
 void Screen::gotoxy(int x, int y) {
     short int _x = x;
     short int _y = y;
@@ -18,15 +20,9 @@ void Screen::resizeConsoleWindow(int width, int height) {
 }
 
 void Screen::clear() {
-    COORD topLeft = {0, 0};
-    HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
-    CONSOLE_SCREEN_BUFFER_INFO screen;
-    DWORD written;
-
-    GetConsoleScreenBufferInfo(console, &screen);
-    FillConsoleOutputCharacterA(console, ' ', screen.dwSize.X * screen.dwSize.Y, topLeft, &written);
-    FillConsoleOutputAttribute(console, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_BLUE, screen.dwSize.X * screen.dwSize.Y, topLeft, &written);
-    SetConsoleCursorPosition(console, topLeft);
+    // clear whole console
+    system("clear");
+    gotoxy(0, 0);
 }
 
 void Screen::drawMaze(const Maze& maze, const Player& player) {
@@ -47,7 +43,7 @@ void Screen::drawMaze(const Maze& maze, const Player& player) {
     gotoxy(consoleWidth - 1, 1);
     std::cout << "Lives: ";
     for (int i = 0; i < player.getLives(); ++i) {
-        std::cout << char(3);
+        std::cout << char(207);
     }
 
     // Draw maze and player in the middle of the console
@@ -67,4 +63,60 @@ void Screen::drawMaze(const Maze& maze, const Player& player) {
         }
         std::cout << '\n';
     }
+}
+
+int Screen::getHeight() const {
+    return height_;
+}
+
+int Screen::getWidth() const {
+    return width_;
+}
+
+void Screen::setHeight(int height) {
+    height_ = height;
+}
+
+void Screen::setWidth(int width) {
+    width_ = width;
+}
+
+void Screen::drawMenu() {
+    clear();
+    gotoxy(0, 0);
+    std::cout << R"(   
+    ______                                                   
+   |  ____|                                                  
+   | |__     ___    ___    __ _   _ __     ___               
+   |  __|   / __|  / __|  / _` | | '_ \   / _ |              
+   | |____  \__ \ | (__  | (_| | | |_) | |  __/              
+   |______| |___/  \___|  \__,_| | .__/   \___|              
+       | |   | |                 | |                         
+       | |_  | |__     ___       |_|                         
+       | __| | '_ \   / _ |                                 
+       | |_  | | | | |  __/                                  
+  _     \__| |_| |_|  \___|          _           _     _     
+ | |         | |                    (_)         | |   | |    
+ | |   __ _  | |__    _   _   _ __   _   _ __   | |_  | |__  
+ | |  / _` | | '_ \  | | | | | '__| | | | '_ \  | __| | '_ | 
+ | | | (_| | | |_) | | |_| | | |    | | | | | | | |_  | | | |
+ |_|  \__,_| |_.__/   \__, | |_|    |_| |_| |_|  \__| |_| |_|
+                       __/ |                                 
+                      |___/                                  
+    )" << std::endl;
+    std::cout << "1. Play" << std::endl;
+    std::cout << "2. Exit" << std::endl;
+    std::cout << "Enter your choice: ";
+}
+
+void Screen::drawGameOver(){
+    std::cout << R"(
+   _____                                 ____                          _ 
+  / ____|                               / __ \                        | |
+ | |  __    __ _   _ __ ___     ___    | |  | | __   __   ___   _ __  | |
+ | | |_ |  / _` | | '_ ` _ \   / _ \   | |  | | \ \ / /  / _ \ | '__| | |
+ | |__| | | (_| | | | | | | | |  __/   | |__| |  \ V /  |  __/ | |    |_|
+  \_____|  \__,_| |_| |_| |_|  \___|    \____/    \_/    \___| |_|    (_)                                                    
+    )" << '\n';
+    std::cout << "Press any key to continue...";
 }
