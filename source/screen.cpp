@@ -1,5 +1,6 @@
 #include "../headers/screen.hpp"
 #include <iostream>
+#include <algorithm>
 #include <windows.h>
 
 Screen::Screen(int width, int height) : width_(width), height_(height) {}
@@ -12,35 +13,45 @@ void Screen::gotoxy(int x, int y) {
 }
 
 void Screen::resizeConsoleWindow(int width, int height) {
-    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-    short int consoleWidth = width;
-    short int consoleHeight = height;
-    SMALL_RECT windowSize = {0, 0, consoleWidth, consoleHeight};
-    SetConsoleWindowInfo(hOut, true, &windowSize);
+    int8_t consoleWidth = width;
+    int8_t consoleHeight = height;
+    COORD coord = {consoleWidth, consoleHeight};
+    SMALL_RECT rmin = {0, 0, 1, 1};
+    SMALL_RECT rect = {0, 0, static_cast<int8_t>(width - 1), static_cast<int8_t>(height - 1)};
+
+    HANDLE Handle = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleWindowInfo(Handle, TRUE, &rmin);
+    SetConsoleScreenBufferSize(Handle, coord);
+    SetConsoleWindowInfo(Handle, TRUE, &rect);
 }
 
 void Screen::clear() {
     // clear whole console
-    system("clear");
     gotoxy(0, 0);
+    system("cls");
 }
 
-void Screen::drawMaze(const Maze& maze, const Player& player) {
+void Screen::setConsoleTitle() {
+    // const * char is incompatible with LPCWSTR
+    // so we need to convert it
+    SetConsoleTitleA("Escape the labyrinth");
+}
+
+void Screen::drawMaze(const Maze& maze, const Player& player, int screenWidth, int screenHeight) {
     const int width = maze.getWidth();
     const int height = maze.getHeight();
     const int startX = maze.getStartX();
     const int startY = maze.getStartY();
 
     // Resize console window to fit the UI
-    const int consoleWidth = width * 2 + 4;
-    const int consoleHeight = height + 4;
-    resizeConsoleWindow(consoleWidth, consoleHeight);
+    const int consoleWidth = screenWidth;
+    const int consoleHeight = screenHeight;
 
     // // Draw score and lives
-    gotoxy(1, 1);
+    gotoxy(2, 2);
     std::cout << "Score: " << player.getScore();
 
-    gotoxy(consoleWidth - 1, 1);
+    gotoxy(consoleWidth/2 + width/3, 2);
     std::cout << "Lives: ";
     for (int i = 0; i < player.getLives(); ++i) {
         std::cout << char(207);
@@ -51,7 +62,6 @@ void Screen::drawMaze(const Maze& maze, const Player& player) {
         gotoxy(consoleWidth/2 - width/2, 4 + y);
         for (int x = 0; x < width; ++x) {
             if (maze.getCellType(x, y) == CellType::WALL) {
-                // print ascii 178
                 std::cout << char(219);
             } else if ((maze.getCellType(x, y) == CellType::PATH) || (maze.getCellType(x, y) == CellType::START)) {
                 std::cout << " ";
@@ -82,41 +92,36 @@ void Screen::setWidth(int width) {
 }
 
 void Screen::drawMenu() {
-    clear();
-    gotoxy(0, 0);
+    gotoxy(1, 1);
     std::cout << R"(   
-    ______                                                   
-   |  ____|                                                  
-   | |__     ___    ___    __ _   _ __     ___               
-   |  __|   / __|  / __|  / _` | | '_ \   / _ |              
-   | |____  \__ \ | (__  | (_| | | |_) | |  __/              
-   |______| |___/  \___|  \__,_| | .__/   \___|              
-       | |   | |                 | |                         
-       | |_  | |__     ___       |_|                         
-       | __| | '_ \   / _ |                                 
-       | |_  | | | | |  __/                                  
-  _     \__| |_| |_|  \___|          _           _     _     
- | |         | |                    (_)         | |   | |    
- | |   __ _  | |__    _   _   _ __   _   _ __   | |_  | |__  
- | |  / _` | | '_ \  | | | | | '__| | | | '_ \  | __| | '_ | 
- | | | (_| | | |_) | | |_| | | |    | | | | | | | |_  | | | |
- |_|  \__,_| |_.__/   \__, | |_|    |_| |_| |_|  \__| |_| |_|
-                       __/ |                                 
-                      |___/                                  
+     _____                           
+    |   __|___ ___ ___ ___ ___       
+    |   __|_ -|  _| .'| . | -_|      
+    |_____|___|___|__,|  _|___|      
+    | |_| |_ ___      |_|            
+    |  _|   | -_|                    
+    |_| |_|_|___|      _     _   _   
+    | |___| |_ _ _ ___|_|___| |_| |_ 
+    | | .'| . | | |  _| |   |  _|   |
+    |_|__,|___|_  |_| |_|_|_|_| |_|_|
+              |___|                         
     )" << std::endl;
-    std::cout << "1. Play" << std::endl;
-    std::cout << "2. Exit" << std::endl;
-    std::cout << "Enter your choice: ";
+    std::cout << "\t1. Play" << std::endl;
+    std::cout << "\t2. Exit" << std::endl;
+    std::cout << "\t>>: ";
 }
 
 void Screen::drawGameOver(){
+    clear();
+    gotoxy(1, 1);
     std::cout << R"(
-   _____                                 ____                          _ 
-  / ____|                               / __ \                        | |
- | |  __    __ _   _ __ ___     ___    | |  | | __   __   ___   _ __  | |
- | | |_ |  / _` | | '_ ` _ \   / _ \   | |  | | \ \ / /  / _ \ | '__| | |
- | |__| | | (_| | | | | | | | |  __/   | |__| |  \ V /  |  __/ | |    |_|
-  \_____|  \__,_| |_| |_| |_|  \___|    \____/    \_/    \___| |_|    (_)                                                    
+     _____                
+    |   __|___ _____ ___  
+    |  |  | .'|     | -_| 
+    |_____|__,|_|_|_|____ 
+    _____             |  |
+    |     |_ _ ___ ___|  |
+    |  |  | | | -_|  _|__|
+    |_____|\_/|___|_| |__|                                                  
     )" << '\n';
-    std::cout << "Press any key to continue...";
 }

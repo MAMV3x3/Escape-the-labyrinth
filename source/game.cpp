@@ -1,14 +1,20 @@
 #include "../headers/game.hpp"
 #include "../headers/screen.hpp"
 #include <Windows.h>
+#include <algorithm>
 #include <iostream>
 
-Game::Game() : width_(11), height_(11), maze_(width_, height_), player_(1, 1), screen_(11 * 2 + 4, 11 + 4){}
+Game::Game() : width_(11), height_(11), maze_(width_, height_), player_(1, 1), screen_(std::max(width_ * 2, 50), std::max(height_ + 6, 20)){}
 
-Game::Game(int width, int height) : width_(width), height_(height), maze_(width_, height_), player_(1, 1), screen_(width * 2 + 4, height + 4) {}
+Game::Game(int width, int height) : width_(width), height_(height), maze_(width_, height_), player_(1, 1), screen_(std::max(width * 2, 50), std::max(height + 6, 20)) {}
 
 void Game::init() {
+    screen_.resizeConsoleWindow(screen_.getWidth(), screen_.getHeight());
+    screen_.setConsoleTitle();
+    screen_.clear();
     screen_.drawMenu();
+    player_.setLives(3);
+    player_.setScore(0);
     int option = 0;
     std::cin >> option;
     switch (option) {
@@ -31,8 +37,6 @@ void Game::run() {
     player_.setY(maze_.getStartY() - 1);
     maze_.setCellType(player_.getX(), player_.getY(), CellType::PLAYER);
     screen_.clear();
-    screen_.resizeConsoleWindow(width_ * 2, height_);
-    render();
     while (true) {
         if(checkGameStatus() == 0) {
             gameOver();
@@ -41,29 +45,25 @@ void Game::run() {
             update();
         }
         handleInput();
+        render();
         Sleep(100);
     }
 }
 
 void Game::handleInput() {
-    if (GetAsyncKeyState(VK_UP)) {
+    if (GetAsyncKeyState(VK_UP) & 0x8000) { 
         checkCollision(0);
-        render();
         player_.handleMovement(maze_, 0);
-    } else if (GetAsyncKeyState(VK_RIGHT)) {
+    } else if (GetAsyncKeyState(VK_RIGHT) & 0x8000) {
         checkCollision(1);
-        render();
         player_.handleMovement(maze_, 1);
-    } else if (GetAsyncKeyState(VK_DOWN)) {
+    } else if (GetAsyncKeyState(VK_DOWN) & 0x8000) {
         checkCollision(2);
-        render();
         player_.handleMovement(maze_, 2);
-    } else if (GetAsyncKeyState(VK_LEFT)) {
+    } else if (GetAsyncKeyState(VK_LEFT) & 0x8000) {
         checkCollision(3);
-        render();
         player_.handleMovement(maze_, 3);
     }
-    
 }
 
 void Game::update() {
@@ -74,7 +74,8 @@ void Game::update() {
 
 void Game::render() {
     screen_.clear();
-    screen_.drawMaze(maze_, player_);
+    //screen_.drawWindowBorder();
+    screen_.drawMaze(maze_, player_, screen_.getWidth(), screen_.getHeight());
 }
 
 void Game::checkCollision(int direction) {
@@ -105,9 +106,25 @@ void Game::checkCollision(int direction) {
 void Game::gameOver() {
     screen_.clear();
     screen_.drawGameOver();
-    std::cout << "Your score: " << player_.getScore() << std::endl;
-    std::cin.get();
-    init();
+    std::cin.clear();
+    std::cout << "\tSCORE: " << player_.getScore() << std::endl << std::endl;
+    std::cout << "\t1. Play again" << std::endl;
+    std::cout << "\t2. Exit" << std::endl;
+    std::cout << "\t>>: ";
+    int option = 0;
+    std::cin >> option;
+    switch (option) {
+        case 1:
+            screen_.clear();
+            init();
+            break;
+        case 2:
+            exit(0);
+            break;
+        default:
+            exit(0);
+            break;
+    }
 }
 
 int Game::checkGameStatus() {

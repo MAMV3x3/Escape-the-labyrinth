@@ -9,7 +9,7 @@ class Screen {
 public:
     Screen(int width, int height);
     static void clear();
-    static void drawMaze(const Maze& maze, const Player& player);
+    static void drawMaze(const Maze& maze, const Player& player, int screenWidth, int screenHeight);
     static void resizeConsoleWindow(int width, int height);
     void setWidth(int width);
     void setHeight(int height);
@@ -17,10 +17,13 @@ public:
     int getHeight() const;
     void drawMenu();
     void drawGameOver();
+    static void setConsoleTitle();
 
 private:
     int width_;
     int height_;
+    int consoleWidth_;
+    int consoleHeight_;
     static void gotoxy(int x, int y);
 };
 
