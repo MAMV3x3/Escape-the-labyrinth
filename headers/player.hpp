@@ -4,11 +4,13 @@
 
 #include "../headers/maze.hpp"
 
-class Player {
+class Player
+{
 public:
+    Player();
     Player(int x, int y);
 
-    void handleMovement(Maze& maze, int direction);
+    void handleMovement(Maze &maze, int direction);
 
     int getX() const;
     int getY() const;
@@ -26,4 +28,4 @@ private:
     int score_;
 };
 
-#endif  // PLAYER_HPP
+#endif // PLAYER_HPP

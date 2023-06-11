@@ -6,7 +6,8 @@
 #include "../headers/player.hpp"
 #include "../headers/screen.hpp"
 
-class Game {
+class Game
+{
 public:
     Game();
     Game(int width, int height);
@@ -29,4 +30,4 @@ private:
     int checkGameStatus();
 };
 
-#endif  // GAME_HPP
+#endif // GAME_HPP

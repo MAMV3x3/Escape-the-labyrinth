@@ -5,11 +5,13 @@
 #include "cells.hpp"
 #include "player.hpp"
 
-class Screen {
+class Screen
+{
 public:
+    Screen();
     Screen(int width, int height);
     static void clear();
-    static void drawMaze(const Maze& maze, const Player& player, int screenWidth, int screenHeight);
+    static void drawMaze(const Maze &maze, const Player &player, int screenWidth, int screenHeight);
     static void resizeConsoleWindow(int width, int height);
     void setWidth(int width);
     void setHeight(int height);
@@ -18,6 +20,7 @@ public:
     void drawMenu();
     void drawGameOver();
     static void setConsoleTitle();
+    static void hideCursor();
 
 private:
     int width_;
@@ -27,4 +30,4 @@ private:
     static void gotoxy(int x, int y);
 };
 
-#endif  // SCREEN_HPP
+#endif // SCREEN_HPP

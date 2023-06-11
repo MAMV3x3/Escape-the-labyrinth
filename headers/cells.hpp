@@ -1,9 +1,17 @@
 #ifndef CELLS_HPP
 #define CELLS_HPP
 
-enum class CellType { WALL, PATH, START, END, PLAYER};
+enum class CellType
+{
+    WALL,
+    PATH,
+    START,
+    END,
+    PLAYER
+};
 
-class Cell {
+class Cell
+{
 public:
     Cell();
 
@@ -14,4 +22,4 @@ private:
     CellType type_;
 };
 
-#endif  // CELLS_HPP
+#endif // CELLS_HPP

@@ -5,7 +5,8 @@
 #include <random>
 #include "../headers/cells.hpp"
 
-class Maze {
+class Maze
+{
 public:
     Maze();
     Maze(int width, int height);
@@ -17,6 +18,8 @@ public:
     int getStartY() const;
     int getEndX() const;
     int getEndY() const;
+    void setWidth(int width);
+    void setHeight(int height);
     void setStartCell(int x, int y);
     void setEndCell(int x, int y);
     CellType getCellType(int x, int y) const;
@@ -30,8 +33,8 @@ private:
     int endX_;
     int endY_;
     std::vector<Cell> cells_;
-    
+
     void createPath(int x, int y);
 };
 
-#endif  // MAZE_HPP
+#endif // MAZE_HPP
