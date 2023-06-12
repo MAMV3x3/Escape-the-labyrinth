@@ -27,6 +27,7 @@ private:
     void checkCollision(int direction);
     void gameOver();
     void run();
+    void nextLevelSound();
     int checkGameStatus();
 };
 

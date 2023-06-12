@@ -71,7 +71,6 @@ void Game::run()
     maze_.setCellType(player_.getX(), player_.getY(), CellType::PLAYER);
     screen_.clear();
     // Prevent player from moving before maze is generated
-    Sleep(100);
     while (true)
     {
         if (checkGameStatus() == 0)
@@ -92,22 +91,22 @@ void Game::run()
 // Handle player inputs and update player position
 void Game::handleInput()
 {
-    if (GetAsyncKeyState(VK_UP) )
+    if (GetAsyncKeyState(VK_UP) & 0x8000)
     {
         checkCollision(0);
         player_.handleMovement(maze_, 0);
     }
-    else if (GetAsyncKeyState(VK_RIGHT) )
+    else if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
     {
         checkCollision(1);
         player_.handleMovement(maze_, 1);
     }
-    else if (GetAsyncKeyState(VK_DOWN) )
+    else if (GetAsyncKeyState(VK_DOWN) & 0x8000)
     {
         checkCollision(2);
         player_.handleMovement(maze_, 2);
     }
-    else if (GetAsyncKeyState(VK_LEFT) )
+    else if (GetAsyncKeyState(VK_LEFT) & 0x8000)
     {
         checkCollision(3);
         player_.handleMovement(maze_, 3);
@@ -117,9 +116,24 @@ void Game::handleInput()
 // Update game state
 void Game::update()
 {
+    // Next level sound, winning sound
+    nextLevelSound();
+    Sleep(1400);
     player_.setLives(3);
     player_.setScore(player_.getScore() + 1);
     run();
+}
+
+void Game::nextLevelSound(){
+    // 523, 587, 659, 698, 784, 880, 988
+    // 200 ms each
+    Beep(523, 200);
+    Beep(587, 200);
+    Beep(659, 200);
+    Beep(698, 200);
+    Beep(784, 200);
+    Beep(880, 200);
+    Beep(988, 200);
 }
 
 // Render game state
@@ -137,24 +151,29 @@ void Game::checkCollision(int direction)
     case 0:
         if (maze_.getCellType(player_.getX(), player_.getY() - 1) == CellType::WALL)
         {
+            Beep(523, 100);
             player_.setLives(player_.getLives() - 1);
         }
         break;
     case 1:
         if (maze_.getCellType(player_.getX() + 1, player_.getY()) == CellType::WALL)
         {
+            // Hit wall sound
+            Beep(523, 100);
             player_.setLives(player_.getLives() - 1);
         }
         break;
     case 2:
         if (maze_.getCellType(player_.getX(), player_.getY() + 1) == CellType::WALL)
         {
+            Beep(523, 100);
             player_.setLives(player_.getLives() - 1);
         }
         break;
     case 3:
         if (maze_.getCellType(player_.getX() - 1, player_.getY()) == CellType::WALL)
         {
+            Beep(523, 100);
             player_.setLives(player_.getLives() - 1);
         }
         break;
@@ -175,6 +194,8 @@ void Game::gameOver()
     std::cout << "\t1. Play again" << std::endl;
     std::cout << "\t2. Exit" << std::endl;
     std::cout << "\t>>: ";
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     int option = 0;
     std::cin >> option;
