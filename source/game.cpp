@@ -71,6 +71,7 @@ void Game::run()
     maze_.setCellType(player_.getX(), player_.getY(), CellType::PLAYER);
     screen_.clear();
     // Prevent player from moving before maze is generated
+    Sleep(200);
     while (true)
     {
         if (checkGameStatus() == 0)
@@ -91,22 +92,22 @@ void Game::run()
 // Handle player inputs and update player position
 void Game::handleInput()
 {
-    if (GetAsyncKeyState(VK_UP) & 0x8000)
+    if (GetAsyncKeyState(VK_UP))
     {
         checkCollision(0);
         player_.handleMovement(maze_, 0);
     }
-    else if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+    else if (GetAsyncKeyState(VK_RIGHT))
     {
         checkCollision(1);
         player_.handleMovement(maze_, 1);
     }
-    else if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+    else if (GetAsyncKeyState(VK_DOWN))
     {
         checkCollision(2);
         player_.handleMovement(maze_, 2);
     }
-    else if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+    else if (GetAsyncKeyState(VK_LEFT))
     {
         checkCollision(3);
         player_.handleMovement(maze_, 3);
