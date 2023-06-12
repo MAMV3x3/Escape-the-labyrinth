@@ -1,7 +1,7 @@
 #include "../headers/screen.hpp"
 #include <iostream>
 #include <algorithm>
-#include <windows.h>
+#include <Windows.h>
 
 // Screen class constructor
 
@@ -73,13 +73,24 @@ void Screen::drawMaze(const Maze &maze, const Player &player, int screenWidth, i
 
     // // Draw score and lives
     gotoxy(2, 2);
-    std::cout << "Score: " << player.getScore();
+    // Light blue color
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 11);
+    std::cout << "Score: ";
+    // Light yellow color
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14);
+    std::cout << player.getScore();
 
-    gotoxy(consoleWidth / 2 + width / 3, 2);
+    gotoxy(consoleWidth - 12, 2);
+    // Light blue color
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 11);
     std::cout << "Lives: ";
     for (int i = 0; i < player.getLives(); ++i)
     {
+        // Light yellow color
+        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14);
         std::cout << char(207);
+        // Reset color
+        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
     }
 
     // Draw maze and player in the middle of the console
@@ -90,7 +101,11 @@ void Screen::drawMaze(const Maze &maze, const Player &player, int screenWidth, i
         {
             if (maze.getCellType(x, y) == CellType::WALL)
             {
+                // Light black color
+                SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
                 std::cout << char(219);
+                // Reset color
+                SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
             }
             else if ((maze.getCellType(x, y) == CellType::PATH) || (maze.getCellType(x, y) == CellType::START))
             {
@@ -98,11 +113,19 @@ void Screen::drawMaze(const Maze &maze, const Player &player, int screenWidth, i
             }
             else if (maze.getCellType(x, y) == CellType::END)
             {
+                // Light green color
+                SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
                 std::cout << char(206);
+                // Reset color
+                SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
             }
             else if (maze.getCellType(x, y) == CellType::PLAYER)
             {
+                // Light yellow color
+                SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14);
                 std::cout << char(207);
+                // Reset color
+                SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
             }
         }
         std::cout << '\n';
@@ -134,6 +157,8 @@ void Screen::setWidth(int width)
 void Screen::drawMenu()
 {
     gotoxy(1, 1);
+    // Red color
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 4);
     std::cout << R"(   
      _____                           
     |   __|___ ___ ___ ___ ___       
@@ -147,6 +172,8 @@ void Screen::drawMenu()
     |_|__,|___|_  |_| |_|_|_|_| |_|_|
               |___|                         
     )" << std::endl;
+    // Reset color
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
     std::cout << "\t1. Play" << std::endl;
     std::cout << "\t2. Exit" << std::endl;
     std::cout << "\t>>: ";
@@ -157,6 +184,8 @@ void Screen::drawGameOver()
 {
     clear();
     gotoxy(1, 1);
+    // Red color
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 4);
     std::cout << R"(
      _____                
     |   __|___ _____ ___  
@@ -167,4 +196,7 @@ void Screen::drawGameOver()
     |  |  | | | -_|  _|__|
     |_____|\_/|___|_| |__|                                                  
     )" << '\n';
+    // Reset color
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+    std::cin.clear();
 }

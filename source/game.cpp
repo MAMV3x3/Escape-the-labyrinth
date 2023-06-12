@@ -42,9 +42,9 @@ void Game::init()
     screen_.setConsoleTitle();
     screen_.hideCursor();
     screen_.clear();
-    screen_.drawMenu();
     player_.setLives(3);
     player_.setScore(0);
+    screen_.drawMenu();
     int option = 0;
     std::cin >> option;
     switch (option)
@@ -70,6 +70,8 @@ void Game::run()
     player_.setY(maze_.getStartY() - 1);
     maze_.setCellType(player_.getX(), player_.getY(), CellType::PLAYER);
     screen_.clear();
+    // Prevent player from moving before maze is generated
+    Sleep(100);
     while (true)
     {
         if (checkGameStatus() == 0)
@@ -90,22 +92,22 @@ void Game::run()
 // Handle player inputs and update player position
 void Game::handleInput()
 {
-    if (GetAsyncKeyState(VK_UP) & 0x8000)
+    if (GetAsyncKeyState(VK_UP) )
     {
         checkCollision(0);
         player_.handleMovement(maze_, 0);
     }
-    else if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+    else if (GetAsyncKeyState(VK_RIGHT) )
     {
         checkCollision(1);
         player_.handleMovement(maze_, 1);
     }
-    else if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+    else if (GetAsyncKeyState(VK_DOWN) )
     {
         checkCollision(2);
         player_.handleMovement(maze_, 2);
     }
-    else if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+    else if (GetAsyncKeyState(VK_LEFT) )
     {
         checkCollision(3);
         player_.handleMovement(maze_, 3);
@@ -164,14 +166,16 @@ void Game::gameOver()
 {
     screen_.clear();
     screen_.drawGameOver();
+    // Yellow color
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14);
     std::cout << "\tSCORE: " << player_.getScore() << std::endl
               << std::endl;
+    // Reset color to white
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
     std::cout << "\t1. Play again" << std::endl;
     std::cout << "\t2. Exit" << std::endl;
     std::cout << "\t>>: ";
-    // clear input buffer
-    std::cin.clear();
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
     int option = 0;
     std::cin >> option;
     switch (option)
