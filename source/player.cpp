@@ -51,7 +51,7 @@ void Player::handleMovement(Maze &maze, int direction)
     }
 }
 
-//Gets all player needed date
+// Gets all player data
 int Player::getX() const
 {
     return x_;

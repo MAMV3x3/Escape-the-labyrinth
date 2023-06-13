@@ -11,7 +11,7 @@ Screen::Screen() : width_(11), height_(11) {}
 // Constructor with width and height parameters
 Screen::Screen(int width, int height) : width_(width), height_(height) {}
 
-//Creates console cursor
+// Creates console cursor
 void Screen::gotoxy(int x, int y)
 {
     short int _x = x;
@@ -20,7 +20,7 @@ void Screen::gotoxy(int x, int y)
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
 
-//Changes size of the console
+// Changes size of the console
 void Screen::resizeConsoleWindow(int width, int height)
 {
     int8_t consoleWidth = width;
@@ -37,15 +37,13 @@ void Screen::resizeConsoleWindow(int width, int height)
 
 void Screen::clear()
 {
-    // clear whole console
+    // Clear whole console
     gotoxy(0, 0);
     system("cls");
 }
 
 void Screen::setConsoleTitle()
 {
-    // const * char is incompatible with LPCWSTR
-    // so we need to convert it
     SetConsoleTitleA("Escape the labyrinth");
 }
 
@@ -59,7 +57,7 @@ void Screen::hideCursor()
     SetConsoleCursorInfo(consoleHandle, &info);
 }
 
-//Sets UI for the running game
+// Sets UI for the running game
 void Screen::drawMaze(const Maze &maze, const Player &player, int screenWidth, int screenHeight)
 {
     const int width = maze.getWidth();
@@ -71,7 +69,7 @@ void Screen::drawMaze(const Maze &maze, const Player &player, int screenWidth, i
     const int consoleWidth = screenWidth;
     const int consoleHeight = screenHeight;
 
-    // // Draw score and lives
+    // Draw score and lives
     gotoxy(2, 2);
     // Light blue color
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 11);
@@ -153,7 +151,7 @@ void Screen::setWidth(int width)
     width_ = width;
 }
 
-//Main Screen menu display
+// Main Screen menu display
 void Screen::drawMenu()
 {
     gotoxy(1, 1);
@@ -179,7 +177,7 @@ void Screen::drawMenu()
     std::cout << "\t>>: ";
 }
 
-//Gameover menu display
+// Gameover menu display
 void Screen::drawGameOver()
 {
     clear();

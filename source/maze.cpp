@@ -119,7 +119,7 @@ void Maze::createPath(int x, int y)
     }
 }
 
-//Get all necesary variables 
+// Get all necesary variables
 void Maze::setWidth(int width)
 {
     width_ = width;

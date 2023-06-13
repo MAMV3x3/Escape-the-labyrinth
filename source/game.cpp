@@ -125,9 +125,8 @@ void Game::update()
     run();
 }
 
-void Game::nextLevelSound(){
-    // 523, 587, 659, 698, 784, 880, 988
-    // 200 ms each
+void Game::nextLevelSound()
+{
     Beep(523, 200);
     Beep(587, 200);
     Beep(659, 200);
@@ -159,7 +158,6 @@ void Game::checkCollision(int direction)
     case 1:
         if (maze_.getCellType(player_.getX() + 1, player_.getY()) == CellType::WALL)
         {
-            // Hit wall sound
             Beep(523, 100);
             player_.setLives(player_.getLives() - 1);
         }
