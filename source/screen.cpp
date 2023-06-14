@@ -130,6 +130,79 @@ void Screen::drawMaze(const Maze &maze, const Player &player, int screenWidth, i
     }
 }
 
+// Function overload for drawMaze
+void Screen::drawMaze(const Maze &maze, const Player &player, int screenWidth, int screenHeight, char path, char wall, char exit, char playerChar)
+{
+    const int width = maze.getWidth();
+    const int height = maze.getHeight();
+    const int startX = maze.getStartX();
+    const int startY = maze.getStartY();
+
+    // Resize console window to fit the UI
+    const int consoleWidth = screenWidth;
+    const int consoleHeight = screenHeight;
+
+    // Draw score and lives
+    gotoxy(2, 2);
+    // Light blue color
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 11);
+    std::cout << "Score: ";
+    // Light yellow color
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14);
+    std::cout << player.getScore();
+
+    gotoxy(consoleWidth - 12, 2);
+    // Light blue color
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 11);
+    std::cout << "Lives: ";
+    for (int i = 0; i < player.getLives(); ++i)
+    {
+        // Light yellow color
+        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14);
+        std::cout << char(playerChar);
+        // Reset color
+        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+    }
+
+    // Draw maze and player in the middle of the console
+    for (int y = 0; y < height; ++y)
+    {
+        gotoxy(consoleWidth / 2 - width / 2, 4 + y);
+        for (int x = 0; x < width; ++x)
+        {
+            if (maze.getCellType(x, y) == CellType::WALL)
+            {
+                // Light black color
+                SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
+                std::cout << char(wall);
+                // Reset color
+                SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+            }
+            else if ((maze.getCellType(x, y) == CellType::PATH) || (maze.getCellType(x, y) == CellType::START))
+            {
+                std::cout << char(path);
+            }
+            else if (maze.getCellType(x, y) == CellType::END)
+            {
+                // Light green color
+                SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+                std::cout << char(exit);
+                // Reset color
+                SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+            }
+            else if (maze.getCellType(x, y) == CellType::PLAYER)
+            {
+                // Light yellow color
+                SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14);
+                std::cout << char(playerChar);
+                // Reset color
+                SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+            }
+        }
+        std::cout << '\n';
+    }
+}
+
 // Gets needed variables for screen
 int Screen::getHeight() const
 {

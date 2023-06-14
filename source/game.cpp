@@ -33,6 +33,30 @@ Game::Game(int width, int height) : width_(width), height_(height), maze_(width_
     screen_.resizeConsoleWindow(std::max(width_ * 2, 50), std::max(height_ + 6, 20));
 }
 
+// Constructor overload with char parameters for each cell type
+Game::Game(int width, int height, char path, char wall, char exit, char playerChar) : width_(width), height_(height), maze_(width_, height_), player_(1, 1), screen_(std::max(width_ * 2, 50), std::max(height_ + 6, 20)), path_(path), wall_(wall), exit_(exit), playerChar_(playerChar)
+{
+    if (width < 3)
+    {
+        width_ = 3;
+    }
+    if (height < 3)
+    {
+        height_ = 3;
+    }
+    if (width_ % 2 == 0)
+    {
+        width_++;
+    }
+    if (height_ % 2 == 0)
+    {
+        height_++;
+    }
+    maze_.setWidth(width_);
+    maze_.setHeight(height_);
+    screen_.resizeConsoleWindow(std::max(width_ * 2, 50), std::max(height_ + 6, 20));
+}
+
 // Game class methods
 
 // Main menu
@@ -41,16 +65,16 @@ void Game::init()
     screen_.resizeConsoleWindow(screen_.getWidth(), screen_.getHeight());
     screen_.setConsoleTitle();
     screen_.hideCursor();
-    screen_.clear();
+    clear();
     player_.setLives(3);
     player_.setScore(0);
-    screen_.drawMenu();
+    drawMenu();
     int option = 0;
     std::cin >> option;
     switch (option)
     {
     case 1:
-        screen_.clear();
+        clear();
         run();
         break;
     case 2:
@@ -69,7 +93,7 @@ void Game::run()
     player_.setX(maze_.getStartX());
     player_.setY(maze_.getStartY() - 1);
     maze_.setCellType(player_.getX(), player_.getY(), CellType::PLAYER);
-    screen_.clear();
+    clear();
     // Prevent player from moving before maze is generated
     Sleep(200);
     while (true)
@@ -139,8 +163,15 @@ void Game::nextLevelSound()
 // Render game state
 void Game::render()
 {
-    screen_.clear();
-    screen_.drawMaze(maze_, player_, screen_.getWidth(), screen_.getHeight());
+    clear();
+    if (checkMazeConstructorParameters())
+    {
+        screen_.drawMaze(maze_, player_, screen_.getWidth(), screen_.getHeight(), path_, wall_, exit_, playerChar_);
+    }
+    else
+    {
+        screen_.drawMaze(maze_, player_, screen_.getWidth(), screen_.getHeight());
+    }
 }
 
 // Check if player collides with wall
@@ -182,8 +213,8 @@ void Game::checkCollision(int direction)
 // Game over screen
 void Game::gameOver()
 {
-    screen_.clear();
-    screen_.drawGameOver();
+    clear();
+    drawGameOver();
     // Yellow color
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14);
     std::cout << "\tSCORE: " << player_.getScore() << std::endl
@@ -201,7 +232,7 @@ void Game::gameOver()
     switch (option)
     {
     case 1:
-        screen_.clear();
+        clear();
         init();
         break;
     case 2:
@@ -225,4 +256,15 @@ int Game::checkGameStatus()
         return 1;
     }
     return 2;
+}
+
+bool Game::checkMazeConstructorParameters()
+{
+    // Check if maze constructor parameters are overloaded
+    // If path_ is empty return false [is char* empty?]
+    if (path_ != '\0')
+    {
+        return true;
+    }
+    return false;
 }

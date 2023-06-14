@@ -4,7 +4,7 @@
 int main()
 {
     // Set lybrinth size
-    Game game(30, 10);
+    Game game(30, 10, ' ', '#', 'E', 'P');
     // Start game command
     game.init();
 

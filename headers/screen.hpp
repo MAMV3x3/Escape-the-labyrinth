@@ -12,6 +12,8 @@ public:
     Screen(int width, int height);
     static void clear();
     static void drawMaze(const Maze &maze, const Player &player, int screenWidth, int screenHeight);
+    // Function overload for drawMaze by passing char element for each cell type
+    static void drawMaze(const Maze &maze, const Player &player, int screenWidth, int screenHeight, char path, char wall, char exit, char playerChar);
     static void resizeConsoleWindow(int width, int height);
     void setWidth(int width);
     void setHeight(int height);
