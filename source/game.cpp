@@ -262,7 +262,7 @@ bool Game::checkMazeConstructorParameters()
 {
     // Check if maze constructor parameters are overloaded
     // If path_ is empty return false [is char* empty?]
-    if (path_ != '\0')
+    if (isblank(path_) || isblank(wall_) || isblank(exit_) || isblank(playerChar_))
     {
         return true;
     }

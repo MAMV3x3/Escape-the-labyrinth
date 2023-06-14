@@ -1,13 +1,9 @@
-// main.cpp
 #include "headers/game.hpp"
 
 int main()
 {
-    // Set lybrinth size
-    Game game(30, 10, ' ', '#', 'E', 'P');
-    // Start game command
+    Game game(25, 15);
     game.init();
 
-    system("pause");
     return 0;
 }
